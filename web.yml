@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-elisha
+  labels:
+    app: web-elisha
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: web-elisha
+  template:
+    metadata:
+      labels:
+        app: web-elisha
+    spec:
+      containers:
+      - name: web-elisha
+        image: 817080430257.dkr.ecr.us-east-2.amazonaws.com/web-elisha:latest
+        ports:
+        - containerPort: 80
