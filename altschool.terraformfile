@@ -1,0 +1,45 @@
+# Configure the AWS provider
+provider "aws" {
+  region = "us-west-2"  
+}
+
+# Create a new VPC for the cluster
+resource "aws_vpc" "elisha-altschool_vpc" {
+  cidr_block = "10.0.0.0/16"  
+
+  tags = {
+    Name = "elisha-altschool_vpc"
+  }
+}
+
+# Create subnets for the VPC
+resource "aws_subnet" "eks_subnet_private" {
+  vpc_id     = aws_vpc.elisha-altschool_vpc.id
+  cidr_block = "10.0.1.0/24"  
+
+  tags = {
+    Name = "eks-private-subnet"
+  }
+}
+
+resource "aws_subnet" "eks_subnet_public" {
+  vpc_id     = aws_vpc.elisha-altschool_vpc.id
+  cidr_block = "10.0.2.0/24" 
+
+  tags = {
+    Name = "eks-public-subnet"
+  }
+}
+
+# Create an EKS cluster
+module "eks" {
+  source = "terraform-aws-modules/eks/aws"
+
+  cluster_name = "example-eks-cluster"
+  subnets      = [aws_subnet.eks_subnet_private.id, aws_subnet.eks_subnet_public.id]
+
+  tags = {
+    Terraform   = "true"
+    Environment = "dev"
+  }
+}
