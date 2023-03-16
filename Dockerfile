@@ -1,8 +1,17 @@
-# from base image node
+# Use an official Nginx runtime as a parent image
+FROM nginx:latest
 
-FROM ubuntu
-RUN apt-get update
-RUN apt-get install nginx -y
-COPY index.html /var/www/html/
+# Set the working directory to /app
+WORKDIR /app
+
+# Copy the current directory contents into the container at /app
+COPY . /app
+
+# Copy the Nginx configuration file
+COPY nginx.conf /etc/nginx/nginx.conf
+
+# Expose port 80
 EXPOSE 80
-CMD ["nginx","-g","daemon off;"]
+
+# Define the command to start Nginx
+CMD ["nginx", "-g", "daemon off;"]
